@@ -68,7 +68,7 @@ crates:
 			lore:
 				- "&7Use this key to open"
 				- "&7a Common Crate"
-			shop:
+		    shop:
 				amount: 1 # Amount per purchase
 				slot: 11 # Slot in shop GUI
 				additional_lore: # Additional lore in shop
@@ -112,6 +112,6 @@ crates:
 ## Notes
 - All color codes use `&` for formatting
 - Supports hex colors with `#RRGGBB` format
-- Total reward chances should add up to 100
+- Total reward chances MUST add up to 100 (if not, unexpected behavior may occur)
 - Shop slots start from 0 and must be less than shop size
 - Block types must be valid Minecraft materials
