@@ -1,0 +1,31 @@
+# CaseOpening Configuration
+messages:
+  prefix: "&8[&6Crates&8] "
+  no-permission: "%prefix%&cYou don't have permission to do this!"
+  key-received: "%prefix%&aYou received &e%amount% %key_name% &akeys!"
+  crate-placed: "%prefix%&aCrate has been placed successfully!"
+  crate-removed: "%prefix%&cCrate has been removed!"
+  crate-destroyed: "%prefix%&cCrate has been destroyed!"
+  not-enough-keys: "%prefix%&cYou don't have enough keys to open this crate!"
+  no-key: "%prefix%&cYou need a key to open this crate!"
+  wrong-key: "%prefix%&cThis is not the correct key for this crate!"
+  configs-reloaded: "%prefix%&aAll configurations have been reloaded!"
+  reload-error: "%prefix%&cError reloading configurations! Check console for details."
+  insufficient-funds: "%prefix%&cYou don't have enough money!"
+  purchase-success: "%prefix%&aSuccessfully purchased %amount% %key_name% key(s)!"
+
+# Hologram Settings
+hologram:
+  offset: 2.5
+  lines:
+    - "&e%crate_name%"
+    - "&eRight Click to open"
+    - "&eLeft Click to view contents"
+
+# Shop Configuration
+shop:
+  settings:
+    title: "&8Key Shop"
+    size: 27
+    fill-empty: true
+    filler-material: BLACK_STAINED_GLASS_PANE

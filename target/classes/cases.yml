@@ -1,0 +1,106 @@
+# Crates Configuration
+crates:
+  common:
+    display-name: "&fCommon Crate"
+    block-type: CHEST
+    hologram:
+      name: "&6Common Crate"
+      lines:
+        - "&6⭐ Common Crate ⭐"
+        - "&eRight Click with key to open"
+        - "&eLeft Click to preview"
+    key:
+      price: 1000
+      material: TRIPWIRE_HOOK
+      name: "&aCommon Key"
+      lore:
+        - "&7Use this key to open"
+        - "&7a Common Crate"
+      shop:
+        amount: 1
+        slot: 11
+        additional_lore:
+          - "&7A basic key that opens"
+          - "&7common crates"
+    rewards:
+      - chance: 70.0
+        type: ITEM
+        material: DIAMOND
+        amount: 3
+        display-name: "&b3 Diamonds"
+        display-item: DIAMOND
+      - chance: 20.0
+        type: COMMAND
+        material: DIAMOND_SWORD
+        commands:
+          - "give %player% diamond_sword 1"
+        display-name: "&bDiamond Sword"
+        display-item: DIAMOND_SWORD
+      - chance: 10.0
+        type: MONEY
+        material: GOLD_INGOT
+        amount: 1000
+        display-name: "&61000 Coins"
+        display-item: GOLD_INGOT
+    
+  rare:
+    display-name: "&9Rare Crate"
+    block-type: CHEST
+    hologram:
+      name: "&b✦ Rare Crate ✦"
+    key:
+      price: 5000
+      material: TRIPWIRE_HOOK
+      name: "&bRare Key"
+      lore:
+        - "&7Use this key to open"
+        - "&7a Rare Crate"
+      shop:
+        amount: 1
+        slot: 13
+        additional_lore:
+          - "&7A special key that opens"
+          - "&7rare crates"
+    rewards:
+      - chance: 60
+        type: ITEM
+        material: NETHERITE_INGOT
+        amount: 1
+        display-name: "&5Netherite Ingot"
+        display-item: NETHERITE_INGOT
+      - chance: 40
+        type: MONEY
+        amount: 10000-50000
+        display-name: "&610k-50k Coins"
+        display-item: EMERALD 
+
+  legendary:
+    display-name: "&6Legendary Crate"
+    block-type: CHEST
+    hologram:
+      name: "&6★ Legendary Crate ★"
+    key:
+      price: 10000
+      material: TRIPWIRE_HOOK
+      name: "&bLegendary Key"
+      lore:
+        - "&7Use this key to open"
+        - "&7a Legendary Crate"
+      shop:
+        amount: 1
+        slot: 15
+        additional_lore:
+          - "&7An exclusive key that opens"
+          - "&7legendary crates"
+    rewards:
+      - chance: 60
+        type: ITEM
+        material: NETHERITE_INGOT
+        amount: 1
+        display-name: "&5Netherite Ingot"
+        display-item: NETHERITE_INGOT
+      - chance: 40
+        type: MONEY
+        amount: 10000-50000
+        display-name: "&610k-50k Coins"
+        display-item: EMERALD 

@@ -1,0 +1,47 @@
+name: CaseOpening
+version: '1.0'
+main: com.f1shy312.caseOpening.main
+api-version: '1.21'
+depend: [Vault, Essentials, DecentHolograms]
+
+commands:
+  crate:
+    description: Main command for the crate system
+    usage: /<command> <give|place|shop|reload|info|help> [args]
+    aliases: [cases]
+    permission: caseopening.use
+
+permissions:
+  caseopening.use:
+    description: Allows using basic crate commands
+    default: true
+  caseopening.admin:
+    description: Allows using admin crate commands
+    default: op
+  caseopening.crate.destroy:
+    description: Allows destroying crates
+    default: op
+  caseopening.command.help:
+    description: Allows using the help command
+    default: true
+  caseopening.command.info:
+    description: Allows using the info command
+    default: true
+  caseopening.command.shop:
+    description: Allows using the shop command
+    default: true
+  caseopening.command.give:
+    description: Allows giving crate keys to players
+    default: op
+  caseopening.command.place:
+    description: Allows placing crates
+    default: op
+  caseopening.command.reload:
+    description: Allows reloading the plugin
+    default: op
+  caseopening.crate.open:
+    description: Allows opening crates
+    default: true
+  caseopening.crate.preview:
+    description: Allows previewing crate contents
+    default: true
