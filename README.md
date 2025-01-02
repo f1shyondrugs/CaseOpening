@@ -1,6 +1,6 @@
 # CaseOpening Plugin
 
-A Minecraft plugin that adds CS:GO-style crate opening mechanics to your server.
+A Minecraft plugin that adds CS:GO/CS2-style crate opening mechanics to your server.
 
 ## Dependencies
 - Vault

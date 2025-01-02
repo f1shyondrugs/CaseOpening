@@ -47,7 +47,6 @@ public class Crate {
 
     public Reward getRandomReward() {
         if (rewards.isEmpty()) {
-            plugin.getLogger().severe("No rewards found for crate " + id);
             return null;
         }
 
@@ -59,22 +58,13 @@ public class Crate {
         double randomValue = random.nextDouble() * 100;
         double currentSum = 0;
 
-        plugin.getLogger().info("Random value: " + randomValue);
-
         for (Reward reward : rewards) {
             currentSum += reward.getChance();
-            plugin.getLogger().info("Checking reward: " + reward.getDisplayName() + 
-                                  " (Chance: " + reward.getChance() + 
-                                  "%, Current sum: " + currentSum + "%)");
-            
             if (randomValue <= currentSum) {
-                plugin.getLogger().info("Selected reward: " + reward.getDisplayName());
                 return reward;
             }
         }
 
-        plugin.getLogger().warning("Failed to select reward normally, falling back to first reward. " +
-                                 "Random value: " + randomValue + ", Total chance: " + totalChance);
         return rewards.get(0);
     }
 

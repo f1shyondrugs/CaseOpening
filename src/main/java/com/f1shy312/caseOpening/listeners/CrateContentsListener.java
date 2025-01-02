@@ -29,9 +29,7 @@ public class CrateContentsListener implements Listener {
             }
             event.setCancelled(true);
             
-            if (event.getWhoClicked() instanceof Player player) {
-                player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
-            }
+            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
         }
     }
 } 

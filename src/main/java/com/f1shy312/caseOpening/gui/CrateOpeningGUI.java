@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class CrateOpeningGUI {
+public class CrateOpeningGUI implements InventoryHolder {
     private final main plugin;
     private final Player player;
     private final Crate crate;
@@ -25,29 +26,29 @@ public class CrateOpeningGUI {
     private final Random random;
     private int taskId = -1;
     private int ticks = 0;
-    private final Reward finalReward;
     private static final int[] DISPLAY_SLOTS = {10, 11, 12, 13, 14, 15, 16};
     private static final int SELECTOR_SLOT = 13;
-    private static final int ANIMATION_LENGTH = 45;
+    private static final int ANIMATION_LENGTH = 55;
     private static final long START_DELAY = 1L;
     private static final long END_DELAY = 20L;
-    private static final int FINAL_SLOWDOWN = 35;
+    private static final int FINAL_SLOWDOWN = 45;
     private long currentDelay = START_DELAY;
-    private List<Reward> displayedRewards;
+    private final List<Reward> displayedRewards;
+    private boolean isAnimating = false;
 
     public CrateOpeningGUI(main plugin, Player player, Crate crate) {
         this.plugin = plugin;
         this.player = player;
         this.crate = crate;
         this.random = new Random();
-        this.finalReward = crate.getRandomReward();
         this.displayedRewards = new ArrayList<>();
         
-        for (int i = 0; i < DISPLAY_SLOTS.length + 3; i++) {
+        // Initialize display rewards
+        for (int i = 0; i < DISPLAY_SLOTS.length + 13; i++) {
             displayedRewards.add(crate.getRandomReward());
         }
         
-        this.inventory = Bukkit.createInventory(null, 27, ColorUtils.colorize("Opening " + crate.getDisplayName()));
+        this.inventory = Bukkit.createInventory(this, 27, ColorUtils.colorize("Opening " + crate.getDisplayName()));
         
         ItemStack filler = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta fillerMeta = filler.getItemMeta();
@@ -75,69 +76,91 @@ public class CrateOpeningGUI {
 
     private void startAnimation() {
         if (taskId != -1) {
-            Bukkit.getScheduler().cancelTask(taskId);
+            stopAnimation();
         }
 
+        isAnimating = true;
         taskId = new BukkitRunnable() {
-            private int offset = 0;
-
             @Override
             public void run() {
-                if (ticks >= ANIMATION_LENGTH) {
+                if (!player.getOpenInventory().getTopInventory().equals(inventory)) {
                     stopAnimation();
-                    giveReward();
                     return;
                 }
 
-                if (ticks < FINAL_SLOWDOWN) {
-                    displayedRewards.remove(0);
-                    displayedRewards.add(crate.getRandomReward());
+                if (ticks >= ANIMATION_LENGTH) {
+                    isAnimating = false;
+                    stopAnimation();
+                    // Let the final displayed reward be the one we give
+                    Reward finalReward = displayedRewards.get(DISPLAY_SLOTS.length / 2);
+                    giveReward(finalReward);
+                    return;
                 }
 
-                for (int i = 0; i < DISPLAY_SLOTS.length; i++) {
-                    try {
+                try {
+                    if (ticks < ANIMATION_LENGTH) {
+                        displayedRewards.remove(0);
+                        displayedRewards.add(crate.getRandomReward());
+                    }
+
+                    for (int i = 0; i < DISPLAY_SLOTS.length; i++) {
                         Reward reward = displayedRewards.get(i);
                         displayReward(DISPLAY_SLOTS[i], reward);
-                    } catch (Exception e) {
-                        plugin.getLogger().severe("Error during animation: " + e.getMessage());
-                        stopAnimation();
-                        player.closeInventory();
-                        return;
                     }
+
+                    float progress = (float) ticks / ANIMATION_LENGTH;
+                    float easedProgress = progress * progress * progress;
+                    currentDelay = START_DELAY + (long)(easedProgress * (END_DELAY - START_DELAY));
+                    
+                    ticks++;
+                    
+                    int currentTaskId = taskId;
+                    cancel();
+                    
+                    if (taskId == currentTaskId && taskId != -1) {
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                if (taskId == currentTaskId && taskId != -1) {
+                                    startAnimation();
+                                }
+                            }
+                        }.runTaskLater(plugin, currentDelay);
+                    }
+
+                    float pitch = Math.max(0.7f, 1.2f - progress);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.3f, pitch);
+
+                } catch (Exception e) {
+                    plugin.getLogger().severe("Error during crate animation: " + e.getMessage());
+                    stopAnimation();
+                    player.closeInventory();
                 }
-
-                float progress = (float) ticks / ANIMATION_LENGTH;
-                float easedProgress = progress * progress * progress;
-                currentDelay = START_DELAY + (long)(easedProgress * (END_DELAY - START_DELAY));
-                
-                cancel();
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (taskId != -1) {
-                            startAnimation();
-                        }
-                    }
-                }.runTaskLater(plugin, currentDelay);
-
-                float pitch = Math.max(0.7f, 1.2f - progress);
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.3f, pitch);
-
-                ticks++;
             }
         }.runTaskTimer(plugin, 0L, currentDelay).getTaskId();
     }
 
-    private void stopAnimation() {
+    public void stopAnimation() {
         if (taskId != -1) {
-            Bukkit.getScheduler().cancelTask(taskId);
-            taskId = -1;
-
-            for (int i = 0; i < DISPLAY_SLOTS.length; i++) {
-                displayReward(DISPLAY_SLOTS[i], finalReward);
+            try {
+                int oldTaskId = taskId;
+                taskId = -1;
+                Bukkit.getScheduler().cancelTask(oldTaskId);
+            } catch (Exception e) {
+                plugin.getLogger().warning("Error cancelling animation task: " + e.getMessage());
             }
-            
-            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+
+            try {
+                // Get the reward that landed in the middle slot
+                Reward centerReward = displayedRewards.get(DISPLAY_SLOTS.length / 2);
+                for (int i = 0; i < DISPLAY_SLOTS.length; i++) {
+                    displayReward(DISPLAY_SLOTS[i], centerReward);
+                }
+                
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+            } catch (Exception e) {
+                plugin.getLogger().severe("Error displaying final reward: " + e.getMessage());
+            }
         }
     }
 
@@ -155,29 +178,29 @@ public class CrateOpeningGUI {
         }
     }
 
-    private void giveReward() {
+    private void giveReward(Reward reward) {
         try {
-            player.closeInventory();
-            if (finalReward != null) {
-                finalReward.give(player);
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-            } else {
-                plugin.getLogger().warning("Final reward was null for player " + player.getName());
-                player.sendMessage(ColorUtils.colorize("&cError: Could not determine reward!"));
-            }
+            reward.give(player);
+            player.sendMessage(ColorUtils.formatMessage(plugin, "%prefix%&aYou won: &e" + reward.getDisplayName() + "&a!"));
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+            
+            // Close inventory after showing the message
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                player.closeInventory();
+            }, 20L);
         } catch (Exception e) {
             plugin.getLogger().severe("Error giving reward: " + e.getMessage());
             player.sendMessage(ColorUtils.colorize("&cAn error occurred while giving your reward."));
+            player.closeInventory();
         }
     }
 
-    private void giveReward(Reward reward) {
-        reward.give(player);
-        
-        player.sendMessage(ColorUtils.formatMessage(plugin, "%prefix%&aYou won: &e" + reward.getDisplayName() + "&a!"));
-        
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            player.closeInventory();
-        }, 20L);
+    @Override
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public boolean isAnimating() {
+        return isAnimating;
     }
 } 

@@ -41,9 +41,9 @@ public class CrateCommand implements CommandExecutor, TabCompleter {
             plugin.getLogger().severe("cases.yml does not contain a 'crates' section!");
         } else {
             ConfigurationSection cratesSection = config.getConfigurationSection("crates");
-            if (cratesSection != null) {
-                plugin.getLogger().info("Available crates: " + String.join(", ", cratesSection.getKeys(false)));
-            }
+            //if (cratesSection != null) {
+            //    plugin.getLogger().info("Available crates: " + String.join(", ", cratesSection.getKeys(false)));
+            //}
         }
         return config;
     }
