@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class CrateOpeningGUI implements InventoryHolder {
     private final main plugin;
@@ -35,6 +36,7 @@ public class CrateOpeningGUI implements InventoryHolder {
     private long currentDelay = START_DELAY;
     private final List<Reward> displayedRewards;
     private boolean isAnimating = false;
+    private static final java.util.Set<UUID> activeOpenings = new java.util.HashSet<>();
 
     public CrateOpeningGUI(main plugin, Player player, Crate crate) {
         this.plugin = plugin;
@@ -70,6 +72,11 @@ public class CrateOpeningGUI implements InventoryHolder {
     }
 
     public void open() {
+        if (isPlayerOpening(player.getUniqueId())) {
+            player.sendMessage(ColorUtils.formatMessage(plugin, plugin.getConfig().getString("messages.already-opening", "&cYou are already opening a case!")));
+            return;
+        }
+        setPlayerOpening(player.getUniqueId(), true);
         player.openInventory(inventory);
         startAnimation();
     }
@@ -149,19 +156,8 @@ public class CrateOpeningGUI implements InventoryHolder {
             } catch (Exception e) {
                 plugin.getLogger().warning("Error cancelling animation task: " + e.getMessage());
             }
-
-            try {
-                // Get the reward that landed in the middle slot
-                Reward centerReward = displayedRewards.get(DISPLAY_SLOTS.length / 2);
-                for (int i = 0; i < DISPLAY_SLOTS.length; i++) {
-                    displayReward(DISPLAY_SLOTS[i], centerReward);
-                }
-                
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-            } catch (Exception e) {
-                plugin.getLogger().severe("Error displaying final reward: " + e.getMessage());
-            }
         }
+        setPlayerOpening(player.getUniqueId(), false);
     }
 
     private void displayReward(int slot, Reward reward) {
@@ -202,5 +198,17 @@ public class CrateOpeningGUI implements InventoryHolder {
 
     public boolean isAnimating() {
         return isAnimating;
+    }
+
+    public static boolean isPlayerOpening(UUID playerId) {
+        return activeOpenings.contains(playerId);
+    }
+
+    public static void setPlayerOpening(UUID playerId, boolean opening) {
+        if (opening) {
+            activeOpenings.add(playerId);
+        } else {
+            activeOpenings.remove(playerId);
+        }
     }
 } 

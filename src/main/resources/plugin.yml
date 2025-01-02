@@ -3,6 +3,8 @@ version: '1.0'
 main: com.f1shy312.caseOpening.main
 api-version: '1.21'
 depend: [Vault, Essentials, DecentHolograms]
+author: F1shy312
+
 
 commands:
   crate:

@@ -13,6 +13,7 @@ messages:
   reload-error: "%prefix%&cError reloading configurations! Check console for details."
   insufficient-funds: "%prefix%&cYou don't have enough money!"
   purchase-success: "%prefix%&aSuccessfully purchased %amount% %key_name% key(s)!"
+  already-opening: "&cYou are already opening a case!"
 
 # Hologram Settings
 hologram:
