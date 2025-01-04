@@ -17,6 +17,7 @@ A Minecraft plugin that adds CS:GO/CS2-style crate opening mechanics to your ser
 | `/crate give <player> <type> [amount]` | Gives crate keys to a player | `caseopening.command.give` |
 | `/crate place <type>` | Places a crate | `caseopening.command.place` |
 | `/crate reload` | Reloads plugin configuration | `caseopening.command.reload` |
+| `/crate additem <type>` | Adds held item to crate rewards | `caseopening.command.additem` |
 
 ## Permissions
 | Permission | Description | Default |
@@ -32,6 +33,7 @@ A Minecraft plugin that adds CS:GO/CS2-style crate opening mechanics to your ser
 | `caseopening.command.give` | Allows giving crate keys to players | op |
 | `caseopening.command.place` | Allows placing crates | op |
 | `caseopening.command.reload` | Allows reloading the plugin | op |
+| `caseopening.command.additem` | Allows adding items to crates | op |
 
 ## Configuration
 

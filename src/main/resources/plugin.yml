@@ -47,3 +47,6 @@ permissions:
   caseopening.crate.preview:
     description: Allows previewing crate contents
     default: true
+  caseopening.command.additem:
+    description: Allows adding items to crates
+    default: op

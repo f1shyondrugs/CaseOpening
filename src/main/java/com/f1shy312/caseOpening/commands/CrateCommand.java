@@ -21,6 +21,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
 
 public class CrateCommand implements CommandExecutor, TabCompleter {
     private final main plugin;
@@ -62,6 +64,7 @@ public class CrateCommand implements CommandExecutor, TabCompleter {
             case "reload" -> handleReloadCommand(sender);
             case "info" -> handleInfoCommand(sender);
             case "help" -> handleHelpCommand(sender);
+            case "additem" -> handleAddItemCommand(sender, args);
             default -> sender.sendMessage(ColorUtils.formatMessage(plugin, "&cUnknown subcommand. Use /crate help for commands."));
         }
 
@@ -219,6 +222,7 @@ public class CrateCommand implements CommandExecutor, TabCompleter {
             helpMessages.add("&e/crate give <player> <type> [amount] &7- Give keys to a player");
             helpMessages.add("&e/crate place <type> &7- Place a crate");
             helpMessages.add("&e/crate reload &7- Reload plugin configuration");
+            helpMessages.add("&e/crate additem <type> &7- Add held item to crate rewards");
         }
         
         helpMessages.add("&8&l&m-----------------");
@@ -226,6 +230,89 @@ public class CrateCommand implements CommandExecutor, TabCompleter {
         for (String message : helpMessages) {
             sender.sendMessage(ColorUtils.colorize(message));
         }
+    }
+
+    private void handleAddItemCommand(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(ColorUtils.formatMessage(plugin, "&cThis command can only be used by players!"));
+            return;
+        }
+
+        if (!sender.hasPermission("caseopening.command.additem")) {
+            sender.sendMessage(ColorUtils.formatMessage(plugin, plugin.getConfig().getString("messages.no-permission")));
+            return;
+        }
+
+        if (args.length != 2) {
+            sender.sendMessage(ColorUtils.formatMessage(plugin, "&cUsage: /crate additem <case>"));
+            return;
+        }
+
+        String crateId = args[1].toLowerCase();
+        ItemStack heldItem = player.getInventory().getItemInMainHand();
+
+        if (heldItem.getType() == Material.AIR) {
+            sender.sendMessage(ColorUtils.formatMessage(plugin, "&cYou must hold an item in your main hand!"));
+            return;
+        }
+
+        try {
+            File casesFile = new File(plugin.getDataFolder(), "cases.yml");
+            FileConfiguration config = YamlConfiguration.loadConfiguration(casesFile);
+            
+            ConfigurationSection crateSection = config.getConfigurationSection("crates." + crateId);
+            if (crateSection == null) {
+                sender.sendMessage(ColorUtils.formatMessage(plugin, "&cInvalid crate type!"));
+                return;
+            }
+
+            List<Map<?, ?>> rewards = crateSection.getMapList("rewards");
+            
+            // Create new reward entry
+            Map<String, Object> newReward = new HashMap<>();
+            newReward.put("chance", 10.0); // Default chance
+            newReward.put("type", "ITEM");
+            newReward.put("material", heldItem.getType().toString());
+            newReward.put("amount", heldItem.getAmount());
+            newReward.put("display-name", heldItem.hasItemMeta() && heldItem.getItemMeta().hasDisplayName() 
+                ? heldItem.getItemMeta().getDisplayName() 
+                : "&f" + formatMaterialName(heldItem.getType().toString()));
+            newReward.put("display-item", heldItem.getType().toString());
+
+            // Add enchantments if present
+            if (heldItem.hasItemMeta() && heldItem.getItemMeta().hasEnchants()) {
+                Map<String, Integer> enchants = new HashMap<>();
+                heldItem.getEnchantments().forEach((enchant, level) -> 
+                    enchants.put(enchant.getKey().getKey(), level));
+                newReward.put("enchantments", enchants);
+            }
+
+            // Add item meta if present
+            if (heldItem.hasItemMeta() && heldItem.getItemMeta().hasLore()) {
+                newReward.put("lore", heldItem.getItemMeta().getLore());
+            }
+
+            rewards.add(newReward);
+            crateSection.set("rewards", rewards);
+            
+            config.save(casesFile);
+            plugin.getCrateManager().reloadCrates();
+            
+            sender.sendMessage(ColorUtils.formatMessage(plugin, "&aSuccessfully added item to " + crateId + " crate!"));
+            
+        } catch (Exception e) {
+            sender.sendMessage(ColorUtils.formatMessage(plugin, "&cError adding item to crate: " + e.getMessage()));
+            e.printStackTrace();
+        }
+    }
+
+    private String formatMaterialName(String material) {
+        return material.toLowerCase()
+                .replace('_', ' ')
+                .substring(0, 1).toUpperCase() + 
+                material.toLowerCase()
+                .replace('_', ' ')
+                .substring(1);
     }
 
     @Override
@@ -239,6 +326,7 @@ public class CrateCommand implements CommandExecutor, TabCompleter {
             completions.add("reload");
             completions.add("info");
             completions.add("help");
+            completions.add("additem");
             return filterCompletions(completions, args[0]);
         }
 
@@ -266,6 +354,14 @@ public class CrateCommand implements CommandExecutor, TabCompleter {
                 completions.addAll(cratesSection.getKeys(false));
             }
             return filterCompletions(completions, args[2]);
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("additem")) {
+            var cratesSection = getCasesConfig().getConfigurationSection("crates");
+            if (cratesSection != null) {
+                completions.addAll(cratesSection.getKeys(false));
+            }
+            return filterCompletions(completions, args[1]);
         }
 
         return completions;
