@@ -1,106 +1,215 @@
 # Crates Configuration
 crates:
-  common:
-    display-name: "&fCommon Crate"
-    block-type: CHEST
+  erde:
+    display-name: "&fErde Kiste"
+    block-type: BARREL
     hologram:
-      name: "&6Common Crate"
+      name: "&6Erde Kiste"
       lines:
-        - "&6⭐ Common Crate ⭐"
-        - "&eRight Click with key to open"
-        - "&eLeft Click to preview"
+        - "&6⭐ Erde Kiste ⭐"
+        - "&eRechtsklick mit Schlüssel zum Öffnen"
+        - "&eLinksklick zum Vorschau"
     key:
       price: 1000
       material: TRIPWIRE_HOOK
-      name: "&aCommon Key"
+      name: "&aErde Schlüssel"
       lore:
-        - "&7Use this key to open"
-        - "&7a Common Crate"
+        - "&7Benutze diesen Schlüssel, um"
+        - "&7eine Erde Kiste zu öffnen"
       shop:
         amount: 1
         slot: 11
         additional_lore:
-          - "&7A basic key that opens"
-          - "&7common crates"
+          - "&7Ein einfacher Schlüssel, der"
+          - "&7Erde Kisten öffnet"
     rewards:
-      - chance: 70.0
+      - amount: 1
+        chance: 1.0
+        lore:
+        - "&7Right-click on a chest to"
+        - "&7sell its contents!"
+        display-name: "&6SellWand &8(&e1.0x&8) &7[100 uses]"
+        type: COMMAND
+        commands:
+          - "sellwand:sellwand give %player% 1 100"
+        display-item: BLAZE_ROD
+      - chance: 20.0
+        type: ITEM
+        material: DIRT
+        amount: 64
+        display-name: "&664 Erde"
+        display-item: DIRT
+      - chance: 30.0
+        type: ITEM
+        material: IRON_INGOT
+        amount: 16
+        display-name: "&f16 Eisenbarren"
+        display-item: IRON_INGOT
+      - chance: 15.0
         type: ITEM
         material: DIAMOND
-        amount: 3
-        display-name: "&b3 Diamonds"
+        amount: 16
+        display-name: "&b16 Diamanten"
         display-item: DIAMOND
-      - chance: 20.0
-        type: COMMAND
-        material: DIAMOND_SWORD
-        commands:
-          - "give %player% diamond_sword 1"
-        display-name: "&bDiamond Sword"
-        display-item: DIAMOND_SWORD
+      - chance: 5.0
+        type: ITEM
+        material: BREAD
+        amount: 16
+        display-name: "&616 Brot"
+        display-item: BREAD
       - chance: 10.0
         type: MONEY
+        amount: 8000
+        display-name: "&6Geld 8k"
+        display-item: EMERALD
+      - chance: 10.0
+        type: ITEM
         material: GOLD_INGOT
-        amount: 1000
-        display-name: "&61000 Coins"
+        amount: 32
+        display-name: "&632 Goldbarren"
         display-item: GOLD_INGOT
-    
-  rare:
-    display-name: "&9Rare Crate"
+      - chance: 10.0
+        type: ITEM
+        material: COAL_BLOCK
+        amount: 16
+        display-name: "&716 Kohleblöcke"
+        display-item: COAL_BLOCK
+      - chance: 10.0
+        type: ITEM
+        material: LAPIS_LAZULI
+        amount: 32
+        display-name: "&19 32 Lapis"
+        display-item: LAPIS_LAZULI
+      - chance: 9.0
+        type: ITEM
+        material: REDSTONE
+        amount: 64
+        display-name: "&c64 Redstone"
+        display-item: REDSTONE
+
+  geld:
+    display-name: "&9Geld Kiste"
     block-type: CHEST
     hologram:
-      name: "&b✦ Rare Crate ✦"
+      name: "&b✦ Geld Kiste ✦"
     key:
-      price: 5000
+      price: 10000
       material: TRIPWIRE_HOOK
-      name: "&bRare Key"
+      name: "&bGeld Schlüssel"
       lore:
-        - "&7Use this key to open"
-        - "&7a Rare Crate"
+        - "&7Benutze diesen Schlüssel, um"
+        - "&7eine Geld Kiste zu öffnen"
       shop:
         amount: 1
         slot: 13
         additional_lore:
-          - "&7A special key that opens"
-          - "&7rare crates"
+          - "&7Ein spezieller Schlüssel, der"
+          - "&7Geld Kisten öffnet"
     rewards:
-      - chance: 60
+      - chance: 30.0
         type: ITEM
-        material: NETHERITE_INGOT
         amount: 1
-        display-name: "&5Netherite Ingot"
-        display-item: NETHERITE_INGOT
-      - chance: 40
+        material: DIRT
+        display-name: "&7Niete"
+        display-item: DIRT
+      - chance: 30.0
         type: MONEY
-        amount: 10000-50000
-        display-name: "&610k-50k Coins"
-        display-item: EMERALD 
+        amount: 1000
+        display-name: "&6Geld 1k"
+        display-item: COAL
+      - chance: 20.0
+        type: MONEY
+        amount: 10000
+        display-name: "&6Geld 10k"
+        display-item: IRON_INGOT
+      - chance: 15.0
+        type: MONEY
+        amount: 50000
+        display-name: "&6Geld 50k"
+        display-item: EMERALD
+      - chance: 5.0
+        type: MONEY
+        amount: 100000
+        display-name: "&6Geld 100k"
+        display-item: EMERALD_BLOCK
 
-  legendary:
-    display-name: "&6Legendary Crate"
-    block-type: CHEST
+  diamant:
+    display-name: "&6Diamant Kiste"
+    block-type: ENDER_CHEST
     hologram:
-      name: "&6★ Legendary Crate ★"
+      name: "&6★ Diamant Kiste ★"
     key:
-      price: 10000
+      price: 500000
       material: TRIPWIRE_HOOK
-      name: "&bLegendary Key"
+      name: "&6Diamant Schlüssel"
       lore:
-        - "&7Use this key to open"
-        - "&7a Legendary Crate"
+        - "&7Benutze diesen Schlüssel, um"
+        - "&7eine Diamant Kiste zu öffnen"
       shop:
         amount: 1
         slot: 15
         additional_lore:
-          - "&7An exclusive key that opens"
-          - "&7legendary crates"
+          - "&7Ein exklusiver Schlüssel, der"
+          - "&7Diamant Kisten öffnet"
     rewards:
-      - chance: 60
+      - amount: 1
+        chance: 10.0
+        lore:
+        - "&7Right-click on a chest to"
+        - "&7sell its contents!"
+        display-name: "&6SellWand &8(&e1.0x&8) &7[5000 uses]"
+        type: COMMAND
+        commands:
+          - "sellwand:sellwand give %player% 1 5000"
+        display-item: BLAZE_ROD
+      - amount: 1
+        chance: 10.0
+        lore:
+        - "&7Right-click on a chest to"
+        - "&7sell its contents!"
+        display-name: "&6SellWand &8(&e2.0x&8) &7[500 uses]"
+        type: COMMAND
+        commands:
+          - "sellwand:sellwand give %player% 2 500"
+        display-item: BLAZE_ROD
+      - amount: 1
+        chance: 1.0
+        display-name: "&6&lOP HACKE"
+        lore:
+        - '&6&lOP HACKE'
+        - ' '
+        - '&7Signed by &a&lBetterTimo&r &7on &e&l25.12.2024 21:20:11'
+        type: COMMAND
+        commands:
+          - "give %player% diamond_pickaxe{display:{Name:'{\"text\":\"OP HACKE\",\"color\":\"gold\",\"bold\":true}'},Enchantments:[{id:\"minecraft:efficiency\",lvl:20},{id:\"minecraft:fortune\",lvl:255},{id:\"minecraft:unbreaking\",lvl:10}],Lore:['[{\"text\":\"OP HACKE \",\"color\":\"gold\",\"bold\":true}]','[\"\"]','{\"text\":\"Signed by \",\"color\":\"gray\"},{\"text\":\"BetterTimo\",\"color\":\"green\",\"bold\":true},{\"text\":\" on \",\"color\":\"gray\"},{\"text\":\"25.12.2024 21:20:11\",\"color\":\"yellow\",\"bold\":true}']} 1"
+        display-item: DIAMOND_PICKAXE
+      - chance: 20
         type: ITEM
-        material: NETHERITE_INGOT
-        amount: 1
-        display-name: "&5Netherite Ingot"
-        display-item: NETHERITE_INGOT
-      - chance: 40
+        material: NETHERITE_BLOCK
+        amount: 64
+        display-name: "&8Netherit Block"
+        display-item: NETHERITE_BLOCK
+      - chance: 15
         type: MONEY
-        amount: 10000-50000
-        display-name: "&610k-50k Coins"
-        display-item: EMERALD 
+        amount: 500000
+        display-name: "&6Geld 500k"
+        display-item: EMERALD
+      - chance: 15
+        type: ITEM
+        material: BARRIER
+        amount: 5
+        display-name: "&6BARRIER"
+        display-item: BARRIER
+      - chance: 19
+        type: ITEM
+        material: BEACON
+        amount: 64
+        display-name: "&fBeacons"
+        display-item: BEACON
+      - chance: 5
+        type: COMMAND
+        material: DIAMOND_BLOCK
+        commands:
+          - "lp user %player% parent add platin"
+        display-name: "&bPlatin Rang"
+        display-item: DIAMOND_BLOCK

@@ -4,7 +4,7 @@
   <groupId>com.f1shy312</groupId>
   <artifactId>CaseOpening</artifactId>
   <name>CaseOpening</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1</version>
   <build>
     <defaultGoal>clean package</defaultGoal>
     <resources>

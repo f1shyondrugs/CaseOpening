@@ -172,15 +172,19 @@ public class ShopManager {
             meta.setDisplayName(ColorUtils.colorize(item.getDisplayName()));
             
             List<String> lore = new ArrayList<>();
+            // Add the crate's configured lore first
             if (!item.getLore().isEmpty()) {
                 item.getLore().forEach(line -> lore.add(ColorUtils.colorize(line)));
                 lore.add("");
             }
             
-            lore.add(ColorUtils.colorize("&7Price: &a$" + item.getPrice()));
-            lore.add(ColorUtils.colorize("&7Amount: &e" + item.getAmount()));
-            lore.add("");
-            lore.add(ColorUtils.colorize("&eClick to purchase!"));
+            // Add shop-specific lore from config
+            for (String line : plugin.getConfig().getStringList("keys.shop_lore")) {
+                line = line.replace("%price%", String.format("%,.0f", item.getPrice()))
+                          .replace("%amount%", String.valueOf(item.getAmount()))
+                          .replace("%crate_name%", item.getDisplayName());
+                lore.add(ColorUtils.colorize(line));
+            }
             
             meta.setLore(lore);
             itemStack.setItemMeta(meta);
@@ -193,5 +197,26 @@ public class ShopManager {
                 .filter(item -> item.getSlot() == slot)
                 .findFirst()
                 .orElse(null);
+    }
+
+    private ItemStack createShopItem(String crateId, String displayName, double price, int amount) {
+        ItemStack item = new ItemStack(Material.TRIPWIRE_HOOK);
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return item;
+
+        meta.setDisplayName(ColorUtils.colorize(displayName));
+        
+        List<String> lore = new ArrayList<>();
+        // Get shop-specific lore from config
+        for (String line : plugin.getConfig().getStringList("keys.format.shop_lore")) {
+            line = line.replace("%price%", String.format("%,.0f", price))
+                      .replace("%amount%", String.valueOf(amount))
+                      .replace("%crate_name%", displayName);
+            lore.add(ColorUtils.colorize(line));
+        }
+        
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
     }
 } 

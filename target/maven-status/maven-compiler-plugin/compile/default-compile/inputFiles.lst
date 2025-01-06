@@ -1,6 +1,5 @@
 E:\CaseOpening\src\main\java\com\f1shy312\caseOpening\commands\CrateCommand.java
 E:\CaseOpening\src\main\java\com\f1shy312\caseOpening\gui\CrateOpeningGUI.java
-E:\CaseOpening\src\main\java\com\f1shy312\caseOpening\listeners\ChatListener.java
 E:\CaseOpening\src\main\java\com\f1shy312\caseOpening\listeners\CrateContentsListener.java
 E:\CaseOpening\src\main\java\com\f1shy312\caseOpening\listeners\CrateInteractListener.java
 E:\CaseOpening\src\main\java\com\f1shy312\caseOpening\listeners\CrateOpeningListener.java
@@ -15,3 +14,4 @@ E:\CaseOpening\src\main\java\com\f1shy312\caseOpening\models\Crate.java
 E:\CaseOpening\src\main\java\com\f1shy312\caseOpening\models\Reward.java
 E:\CaseOpening\src\main\java\com\f1shy312\caseOpening\models\ShopItem.java
 E:\CaseOpening\src\main\java\com\f1shy312\caseOpening\utils\ColorUtils.java
+E:\CaseOpening\src\main\java\com\f1shy312\caseOpening\utils\SecurityManager.java

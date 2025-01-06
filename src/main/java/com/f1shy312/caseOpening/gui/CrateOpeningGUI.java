@@ -50,11 +50,16 @@ public class CrateOpeningGUI implements InventoryHolder {
             displayedRewards.add(crate.getRandomReward());
         }
         
-        this.inventory = Bukkit.createInventory(this, 27, ColorUtils.colorize("Opening " + crate.getDisplayName()));
+        String title = ColorUtils.colorize(plugin.getConfig().getString("gui.opening.title", "&8Opening %crate_name%")
+            .replace("%crate_name%", crate.getDisplayName()));
+        this.inventory = Bukkit.createInventory(this, 27, title);
         
-        ItemStack filler = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        // Set filler items
+        ItemStack filler = new ItemStack(Material.valueOf(
+            plugin.getConfig().getString("gui.opening.filler-material", "BLACK_STAINED_GLASS_PANE")));
         ItemMeta fillerMeta = filler.getItemMeta();
-        fillerMeta.setDisplayName(" ");
+        fillerMeta.setDisplayName(ColorUtils.colorize(
+            plugin.getConfig().getString("gui.opening.filler-name", " ")));
         filler.setItemMeta(fillerMeta);
         
         for (int i = 0; i < inventory.getSize(); i++) {
@@ -77,6 +82,7 @@ public class CrateOpeningGUI implements InventoryHolder {
             return;
         }
         setPlayerOpening(player.getUniqueId(), true);
+        isAnimating = true;
         player.openInventory(inventory);
         startAnimation();
     }
@@ -150,13 +156,13 @@ public class CrateOpeningGUI implements InventoryHolder {
     public void stopAnimation() {
         if (taskId != -1) {
             try {
-                int oldTaskId = taskId;
+                Bukkit.getScheduler().cancelTask(taskId);
                 taskId = -1;
-                Bukkit.getScheduler().cancelTask(oldTaskId);
             } catch (Exception e) {
                 plugin.getLogger().warning("Error cancelling animation task: " + e.getMessage());
             }
         }
+        isAnimating = false;
         setPlayerOpening(player.getUniqueId(), false);
     }
 
@@ -177,8 +183,17 @@ public class CrateOpeningGUI implements InventoryHolder {
     private void giveReward(Reward reward) {
         try {
             reward.give(player);
-            player.sendMessage(ColorUtils.formatMessage(plugin, "%prefix%&aYou won: &e" + reward.getDisplayName() + "&a!"));
+            // Use configured message from config.yml
+            String message = plugin.getConfig().getString("messages.reward-won", "&aYou won: &e%reward_name%&a!")
+                .replace("%reward_name%", reward.getDisplayName());
+            player.sendMessage(ColorUtils.formatMessage(plugin, message));
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+            
+            // Immediately clear the player's opening state
+            if (plugin.getCrateInteractListener() != null) {
+                plugin.getCrateInteractListener().clearAllPlayerStates(player);
+            }
+            setPlayerOpening(player.getUniqueId(), false);
             
             // Close inventory after showing the message
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -197,7 +212,7 @@ public class CrateOpeningGUI implements InventoryHolder {
     }
 
     public boolean isAnimating() {
-        return isAnimating;
+        return isAnimating && taskId != -1;
     }
 
     public static boolean isPlayerOpening(UUID playerId) {

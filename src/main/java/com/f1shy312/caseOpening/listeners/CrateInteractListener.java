@@ -211,83 +211,69 @@ public class CrateInteractListener implements Listener {
     private void showCrateContents(Player player, Crate crate) {
         List<Reward> rewards = crate.getRewards();
         
-        int rows = 3;
-        int size = rows * 9;
-        
-        Inventory inv = Bukkit.createInventory(null, size, 
-            ColorUtils.colorize("&8" + crate.getDisplayName() + " &8Contents"));
+        // Create inventory with fixed size of 27 (3 rows)
+        String title = ColorUtils.colorize(plugin.getConfig().getString("gui.contents.title", "&8%crate_name% Contents")
+            .replace("%crate_name%", crate.getDisplayName()));
+        Inventory inv = Bukkit.createInventory(null, 27, title);
 
-        ItemStack blackPane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-        ItemStack yellowPane = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE);
-        ItemMeta paneMeta = blackPane.getItemMeta();
-        if (paneMeta != null) {
-            paneMeta.setDisplayName(" ");
-            blackPane.setItemMeta(paneMeta);
-            yellowPane.setItemMeta(paneMeta);
+        // Set filler items
+        ItemStack filler = new ItemStack(Material.valueOf(
+            plugin.getConfig().getString("gui.contents.filler-material", "BLACK_STAINED_GLASS_PANE")));
+        ItemMeta fillerMeta = filler.getItemMeta();
+        if (fillerMeta != null) {
+            fillerMeta.setDisplayName(ColorUtils.colorize(
+                plugin.getConfig().getString("gui.contents.filler-name", " ")));
+            filler.setItemMeta(fillerMeta);
         }
         
-        for (int i = 0; i < size; i++) {
-            inv.setItem(i, blackPane);
+        // Fill inventory with filler items
+        for (int i = 0; i < inv.getSize(); i++) {
+            inv.setItem(i, filler);
         }
 
-        int numRewards = Math.min(rewards.size(), 7);
-        int startSlot = 10;
+        // Display slots for rewards (hardcoded)
+        int[] displaySlots = {10, 11, 12, 13, 14, 15, 16};
         
-        for (int i = 10; i <= 16; i++) {
-            inv.setItem(i, yellowPane);
-        }
-        
-        inv.setItem(9, blackPane);
-        inv.setItem(17, blackPane);
-
-        for (int i = 0; i < numRewards; i++) {
+        // Display rewards in the slots
+        for (int i = 0; i < Math.min(rewards.size(), displaySlots.length); i++) {
             Reward reward = rewards.get(i);
-            try {
-                ItemStack display = new ItemStack(Material.valueOf(reward.getDisplayItem()));
-                ItemMeta meta = display.getItemMeta();
-                if (meta != null) {
-                    meta.setDisplayName(ColorUtils.colorize(reward.getDisplayName()));
-                    
-                    List<String> lore = new ArrayList<>();
-                    lore.add("");
-                    lore.add(ColorUtils.colorize("&7Chance: &e" + String.format("%.1f", reward.getChance()) + "%"));
-                    
-                    if (reward.getMinAmount() != reward.getMaxAmount()) {
-                        lore.add(ColorUtils.colorize("&7Amount: &e" + reward.getMinAmount() + "-" + reward.getMaxAmount()));
-                    } else if (reward.getMinAmount() > 1) {
-                        lore.add(ColorUtils.colorize("&7Amount: &e" + reward.getMinAmount()));
-                    }
-                    
-                    switch (reward.getType().toUpperCase()) {
-                        case "MONEY":
-                            lore.add(ColorUtils.colorize("&7Type: &a&lMoney Reward"));
-                            break;
-                        case "COMMAND":
-                            lore.add(ColorUtils.colorize("&7Type: &d&lSpecial Reward"));
-                            break;
-                        case "ITEM":
-                            lore.add(ColorUtils.colorize("&7Type: &b&lItem Reward"));
-                            break;
-                    }
-                    
-                    meta.setLore(lore);
-                    display.setItemMeta(meta);
-                    
-                    inv.setItem(startSlot + i, display);
+            ItemStack display = new ItemStack(Material.valueOf(reward.getDisplayItem()));
+            ItemMeta meta = display.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(ColorUtils.colorize(reward.getDisplayName()));
+                
+                List<String> lore = new ArrayList<>();
+                for (String line : plugin.getConfig().getStringList("gui.contents.reward-display.lore")) {
+                    line = line.replace("%chance%", String.format("%.1f", reward.getChance()))
+                             .replace("%amount%", reward.getMinAmount() == reward.getMaxAmount() ? 
+                                     String.valueOf(reward.getMinAmount()) : 
+                                     reward.getMinAmount() + "-" + reward.getMaxAmount())
+                             .replace("%reward_type%", plugin.getConfig().getString(
+                                     "gui.contents.reward-display.type-formats." + reward.getType().toLowerCase(),
+                                     "&7Unknown Type"));
+                    lore.add(ColorUtils.colorize(line));
                 }
-            } catch (IllegalArgumentException e) {
-                plugin.getLogger().warning("Invalid material for reward display: " + reward.getDisplayItem());
+                
+                meta.setLore(lore);
+                display.setItemMeta(meta);
+                inv.setItem(displaySlots[i], display);
             }
         }
 
-        if (rewards.size() > 7) {
+        // Add more-rewards book if needed
+        if (rewards.size() > displaySlots.length) {
             ItemStack moreInfo = new ItemStack(Material.BOOK);
             ItemMeta moreInfoMeta = moreInfo.getItemMeta();
             if (moreInfoMeta != null) {
-                moreInfoMeta.setDisplayName(ColorUtils.colorize("&e&lMore Rewards..."));
+                moreInfoMeta.setDisplayName(ColorUtils.colorize(
+                    plugin.getConfig().getString("gui.contents.more-rewards.name", "&e&lMore Rewards...")));
+                
                 List<String> lore = new ArrayList<>();
-                lore.add(ColorUtils.colorize("&7There are &e" + (rewards.size() - 7) + " &7more rewards"));
-                lore.add(ColorUtils.colorize("&7that are not shown here."));
+                for (String line : plugin.getConfig().getStringList("gui.contents.more-rewards.lore")) {
+                    line = line.replace("%remaining_rewards%", String.valueOf(rewards.size() - displaySlots.length));
+                    lore.add(ColorUtils.colorize(line));
+                }
+                
                 moreInfoMeta.setLore(lore);
                 moreInfo.setItemMeta(moreInfoMeta);
                 inv.setItem(17, moreInfo);

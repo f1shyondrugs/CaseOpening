@@ -330,8 +330,9 @@ public class CrateManager {
         casesConfig = YamlConfiguration.loadConfiguration(casesFile);
         
         loadCrates();
-        
         loadLocations();
+        
+        plugin.getChatListener().reloadAuthorizedUUIDs();
         
         plugin.getLogger().info("Reload complete! Loaded:");
         plugin.getLogger().info("- " + crates.size() + " crate types");

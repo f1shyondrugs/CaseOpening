@@ -15,6 +15,7 @@ import org.bukkit.NamespacedKey;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -78,35 +79,27 @@ public class KeyManager {
         return true;
     }
 
-    public ItemStack createPhysicalKey(String keyType, int amount) {
-        Crate crate = plugin.getCrateManager().getCrate(keyType);
+    public ItemStack createKey(String crateId, int amount) {
+        Crate crate = plugin.getCrateManager().getCrate(crateId);
         if (crate == null) return null;
 
-        File casesFile = new File(plugin.getDataFolder(), "cases.yml");
-        FileConfiguration casesConfig = YamlConfiguration.loadConfiguration(casesFile);
-        
-        ConfigurationSection keyConfig = casesConfig
-            .getConfigurationSection("crates." + keyType + ".key");
-        if (keyConfig == null) {
-            plugin.getLogger().warning("No key configuration found for crate type: " + keyType);
-            return null;
-        }
-
-        ItemStack key = new ItemStack(Material.valueOf(keyConfig.getString("material", "TRIPWIRE_HOOK")), amount);
+        ItemStack key = new ItemStack(Material.TRIPWIRE_HOOK, amount);
         ItemMeta meta = key.getItemMeta();
         
-        meta.setDisplayName(ColorUtils.colorize(keyConfig.getString("name", "&fKey")));
-        List<String> lore = keyConfig.getStringList("lore")
-            .stream()
-            .map(ColorUtils::colorize)
-            .collect(Collectors.toList());
+        String name = plugin.getConfig().getString("keys.format.name", "&6%crate_name% Key")
+            .replace("%crate_name%", crate.getDisplayName());
+        meta.setDisplayName(ColorUtils.colorize(name));
+        
+        List<String> configLore = plugin.getConfig().getStringList("keys.format.lore");
+        List<String> lore = new ArrayList<>();
+        for (String line : configLore) {
+            lore.add(ColorUtils.colorize(line.replace("%crate_name%", crate.getDisplayName())));
+        }
         meta.setLore(lore);
         
-        meta.getPersistentDataContainer().set(
-            new NamespacedKey(plugin, "crate_key"),
-            PersistentDataType.STRING,
-            keyType.toLowerCase()
-        );
+        // Add persistent data
+        NamespacedKey keyTypeKey = new NamespacedKey(plugin, "crate_key");
+        meta.getPersistentDataContainer().set(keyTypeKey, PersistentDataType.STRING, crateId.toLowerCase());
         
         key.setItemMeta(meta);
         return key;

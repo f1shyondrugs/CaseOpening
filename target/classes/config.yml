@@ -14,6 +14,36 @@ messages:
   insufficient-funds: "%prefix%&cYou don't have enough money!"
   purchase-success: "%prefix%&aSuccessfully purchased %amount% %key_name% key(s)!"
   already-opening: "&cYou are already opening a case!"
+  reward-won: "%prefix%&aYou won: &e%reward_name%&a!"
+
+# GUI Settings
+gui:
+  # Opening Animation GUI
+  opening:
+    title: "&8Opening %crate_name%"
+    filler-material: BLACK_STAINED_GLASS_PANE
+    filler-name: " "
+  
+  # Contents Preview GUI
+  contents:
+    title: "&8%crate_name% Contents"
+    filler-material: BLACK_STAINED_GLASS_PANE
+    filler-name: " "
+    reward-display:
+      lore:
+        - ""
+        - "&7Chance: &e%chance%%"
+        - "&7Amount: &e%amount%"
+        - "&7Type: %reward_type%"
+      type-formats:
+        money: "&a&lMoney Reward"
+        command: "&d&lSpecial Reward"
+        item: "&b&lItem Reward"
+    more-rewards:
+      name: "&e&lMore Rewards..."
+      lore:
+        - "&7There are &e%remaining_rewards% &7more rewards"
+        - "&7that are not shown here."
 
 # Hologram Settings
 hologram:
@@ -27,6 +57,13 @@ hologram:
 shop:
   settings:
     title: "&8Key Shop"
-    size: 27
     fill-empty: true
     filler-material: BLACK_STAINED_GLASS_PANE
+
+# Key Settings
+keys:
+  shop_lore:
+    - "&7Price: &a$%price%"
+    - "&7Amount: &e%amount%"
+    - ""
+    - "&eClick to purchase!"
