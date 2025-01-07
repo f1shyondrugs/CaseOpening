@@ -2,7 +2,7 @@ name: CaseOpening
 version: '1.0'
 main: com.f1shy312.caseOpening.main
 api-version: '1.21'
-depend: [Vault, Essentials, DecentHolograms]
+depend: [Vault, DecentHolograms]
 author: F1shy312
 
 

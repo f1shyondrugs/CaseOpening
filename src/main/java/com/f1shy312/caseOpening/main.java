@@ -51,12 +51,6 @@ public final class main extends JavaPlugin {
             return;
         }
         
-        if (getServer().getPluginManager().getPlugin("Essentials") == null) {
-            getLogger().severe("Essentials not found! Disabling plugin...");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-        
         if (getServer().getPluginManager().getPlugin("DecentHolograms") == null) {
             getLogger().severe("DecentHolograms not found! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
