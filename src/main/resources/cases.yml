@@ -213,3 +213,11 @@ crates:
           - "lp user %player% parent add platin"
         display-name: "&bPlatin Rang"
         display-item: DIAMOND_BLOCK
+
+  example:
+    rewards:
+      - chance: 10.0
+        type: ITEM
+        material: DIAMOND_SWORD
+        display-name: "&6Legendary Sword"
+        nbt: "{Enchantments:[{id:\"minecraft:sharpness\",lvl:5},{id:\"minecraft:unbreaking\",lvl:3}],display:{Name:'{\"text\":\"Legendary Sword\",\"color\":\"gold\",\"italic\":false}',Lore:['{\"text\":\"A powerful sword!\",\"color\":\"purple\",\"italic\":false}']}}"

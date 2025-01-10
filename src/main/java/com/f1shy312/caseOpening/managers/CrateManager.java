@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import de.tr7zw.nbtapi.NBTContainer;
+import de.tr7zw.nbtapi.NBTItem;
 
 public class CrateManager {
     private final main plugin;
@@ -79,6 +81,11 @@ public class CrateManager {
                         }
                     }
 
+                    String nbtData = null;
+                    if (rewardMap.containsKey("nbt")) {
+                        nbtData = String.valueOf(rewardMap.get("nbt"));
+                    }
+
                     String displayItem = rewardMap.containsKey("display-item") ? 
                         String.valueOf(rewardMap.get("display-item")) : material;
                     String displayName = rewardMap.containsKey("display-name") ? 
@@ -106,7 +113,9 @@ public class CrateManager {
                         displayItem,
                         displayName,
                         minAmount,
-                        maxAmount
+                        maxAmount,
+                        nbtData,
+                        plugin
                     );
                     crate.addReward(reward);
                     plugin.getLogger().info("Loaded reward " + reward.getDisplayName() + " for crate " + crateId);
@@ -331,8 +340,6 @@ public class CrateManager {
         
         loadCrates();
         loadLocations();
-        
-        plugin.getChatListener().reloadAuthorizedUUIDs();
         
         plugin.getLogger().info("Reload complete! Loaded:");
         plugin.getLogger().info("- " + crates.size() + " crate types");

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
+import de.tr7zw.nbtapi.NBTItem;
 
 public class CrateCommand implements CommandExecutor, TabCompleter {
     private final main plugin;
@@ -279,7 +280,20 @@ public class CrateCommand implements CommandExecutor, TabCompleter {
                 : "&f" + formatMaterialName(heldItem.getType().toString()));
             newReward.put("display-item", heldItem.getType().toString());
 
-            // Add enchantments if present
+            // Add NBT data if present
+            try {
+                Class.forName("de.tr7zw.nbtapi.NBTItem");
+                NBTItem nbtItem = new NBTItem(heldItem);
+                if (!nbtItem.toString().equals("{}")) {
+                    newReward.put("nbt", nbtItem.toString());
+                }
+            } catch (ClassNotFoundException e) {
+                plugin.getLogger().warning("NBTAPI not found - NBT data will not be saved");
+            } catch (Exception e) {
+                plugin.getLogger().warning("Failed to save NBT data: " + e.getMessage());
+            }
+
+            // Add enchantments if present (as backup if NBT fails)
             if (heldItem.hasItemMeta() && heldItem.getItemMeta().hasEnchants()) {
                 Map<String, Integer> enchants = new HashMap<>();
                 heldItem.getEnchantments().forEach((enchant, level) -> 

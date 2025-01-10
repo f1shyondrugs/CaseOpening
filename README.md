@@ -152,6 +152,7 @@ crates:
         amount: 1000
         display-name: "&61000 Coins"
         display-item: GOLD_INGOT
+        nbt: '{PublicBukkitValues:{"something":something,"something2":something2,"something3":something3}}'
 ```
 
 ## Reward Types
@@ -179,3 +180,7 @@ crates:
 - Block types must be valid Minecraft materials
 - Hologram lines can be customized per crate or use default configuration
 - Custom messages can include the prefix placeholder
+
+## Support
+
+For issues or feature requests, please use the GitHub issue tracker, contact me on Discord: `f1shyondrugs312` or per email: `info@f1shy312.com`
